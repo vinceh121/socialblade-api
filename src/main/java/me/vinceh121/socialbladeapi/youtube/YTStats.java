@@ -11,12 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class YTStats {
-	private String channelId, username, cusername, mod, subs, countryCode, country, channelType, avatar, banner,
-			partner, grade, networkName, networkDisplayName, googleplus, facebook, twitter, instagram;
-	int averageDailyViews, averageDailySubs, uploads;
+	private String channelId, username, cusername, mod, countryCode, country, channelType, avatar, banner, partner,
+			grade, networkName, networkDisplayName, googleplus, facebook, twitter, instagram;
 	long views;
 	private boolean isVerfied;
-	private int sbRank, rank, viewsRank, countryRank, channelTypeRank, subsGrowth, viewsGrowth;
+	private int sbRank, rank, viewsRank, countryRank, channelTypeRank, subsGrowth, viewsGrowth, averageDailyViews,
+			averageDailySubs, uploads, subs;
 
 	private HashMap<Integer, Long> subsChart, viewsChart;
 	private HashMap<Integer, YTDataPoint> dataDaily;
@@ -61,7 +61,7 @@ public class YTStats {
 	/**
 	 * @return the subs
 	 */
-	public String getSubs() {
+	public int getSubs() {
 		return subs;
 	}
 
@@ -268,6 +268,7 @@ public class YTStats {
 		JSONObject data = o.getJSONObject("data");
 		s.createdAt = df.parse(data.getString("created_at"));
 		s.uploads = data.getInt("uploads");
+		s.subs = data.getInt("subs");
 		s.views = data.getLong("views");
 		s.countryCode = data.getString("country_code");
 		s.country = data.getString("country");
@@ -293,7 +294,7 @@ public class YTStats {
 			s.networkName = network.getString("networkname"); // Sometimes networkname = null
 		} catch (JSONException e) {
 		}
-		
+
 		try {
 			s.networkDisplayName = network.getString("networkname_display"); // Sometime networkname_display = null
 		} catch (JSONException e) {
