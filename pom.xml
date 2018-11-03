@@ -7,6 +7,14 @@
 	<version>0.1.0</version>
 	<name>SocialBlade API</name>
 	<description>Unofficial Social Blade API</description>
+	<packaging>jar</packaging>
+	<licenses>
+		<license>
+			<name>GNU General Public License V3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.en.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.json/json -->
 		<dependency>
