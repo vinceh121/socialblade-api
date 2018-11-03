@@ -1,4 +1,4 @@
-package me.vinceh121.socialbladeapi;
+package me.vinceh121.socialbladeapi.youtube;
 
 import java.util.Date;
 

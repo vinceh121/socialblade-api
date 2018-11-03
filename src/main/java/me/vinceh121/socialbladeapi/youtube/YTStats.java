@@ -1,4 +1,4 @@
-package me.vinceh121.socialbladeapi;
+package me.vinceh121.socialbladeapi.youtube;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -255,8 +255,6 @@ public class YTStats {
 	}
 
 	public static YTStats fromJson(JSONObject o) throws JSONException, ParseException {
-		System.out.println(o.toString(2)); // XXX: Testing
-		
 		final DateFormat df = new SimpleDateFormat("y-M-d");
 
 		YTStats s = new YTStats();
@@ -292,14 +290,13 @@ public class YTStats {
 
 		JSONObject network = o.getJSONObject("network");
 		try {
-			s.networkName = network.getString("networkname");
+			s.networkName = network.getString("networkname"); // Sometimes networkname = null
 		} catch (JSONException e) {
-			e.printStackTrace();
 		}
+		
 		try {
-			s.networkDisplayName = network.getString("networkname_display");
+			s.networkDisplayName = network.getString("networkname_display"); // Sometime networkname_display = null
 		} catch (JSONException e) {
-			e.printStackTrace();
 		}
 
 		JSONObject social = o.getJSONObject("social");

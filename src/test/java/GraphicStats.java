@@ -1,33 +1,36 @@
 import java.awt.HeadlessException;
+import java.text.ParseException;
 
 import javax.swing.JOptionPane;
 
 import org.json.JSONException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import me.vinceh121.socialbladeapi.SocialBlade;
-import me.vinceh121.socialbladeapi.YTStats;
+import me.vinceh121.socialbladeapi.twitter.TWStats;
+import me.vinceh121.socialbladeapi.youtube.YTStats;
 
 public class GraphicStats {
 
-	private SocialBlade sb;
+	private static SocialBlade sb;
 
-	@BeforeAll
-	public void setUp() throws Exception {
+	public GraphicStats() throws HeadlessException, JSONException, Exception {
+		if (sb != null)
+			return;
 		sb = new SocialBlade();
-	}
-
-	@Test
-	public void login() throws HeadlessException, JSONException, Exception {
 		sb.login(JOptionPane.showInputDialog("SB Email"), JOptionPane.showInputDialog("SB Password (visisble)"));
-
 	}
 
 	@Test
-	public void stats() throws HeadlessException, JSONException, Exception {
+	public void YTStats() throws HeadlessException, JSONException, Exception {
 		YTStats s = sb.statsYoutube(JOptionPane.showInputDialog("Youtuber to lookup"));
-		System.out.println(s.getCusername() + "'s current total number of views is " + s.getViews());
+		System.out.println("@" + s.getUsername() + "'s current total number of views is " + s.getViews());
+	}
+
+	@Test
+	public void TWStats() throws HeadlessException, JSONException, ParseException, Exception {
+		TWStats s = sb.statsTwitter(JOptionPane.showInputDialog("Twitter username to lookup"));
+		System.out.println(s.getFullName() + " has " + s.getFollowers() + " followers.");
 	}
 
 }

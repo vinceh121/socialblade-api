@@ -6,9 +6,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import me.vinceh121.socialbladeapi.twitter.TWStats;
+import me.vinceh121.socialbladeapi.youtube.YTStats;
 
 public class SocialBlade {
 	private String token, email;
@@ -16,6 +20,11 @@ public class SocialBlade {
 
 	public SocialBlade() {
 
+	}
+	
+	public TWStats statsTwitter(String name) throws JSONException, ParseException, Exception {
+		return TWStats.fromJson(getJson("https://api.socialblade.com/v2/twitter/statistics?query=statistics&username="
+				+ name + "&email=" + email + "&token=" + token));
 	}
 	
 	public JSONObject getUserJson() {
