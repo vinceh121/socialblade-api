@@ -6,7 +6,7 @@ For now, only Youtube and Twitter are implemented.
 ## How to use
 The library can be used like any other Maven artefact, just add the Jitpack.io repository:
 
-```
+```xml
 <repositories>
 	<repository>
 	    <id>jitpack.io</id>
@@ -17,7 +17,7 @@ The library can be used like any other Maven artefact, just add the Jitpack.io r
 
 And then add the dependency:
 
-```
+```xml
 <dependency>
     <groupId>com.github.vinceh121</groupId>
     <artifactId>socialblade-api</artifactId>
@@ -29,7 +29,7 @@ And then add the dependency:
 
 The following example prints out the number of subscribers of pewdiepie's Youtube channel
 
-```
+```java
 SocialBlade sb = new SocialBlade();
 sb.login("Your SocialBlade username", "Your SocialBlade password");
 
