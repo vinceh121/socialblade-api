@@ -16,6 +16,7 @@ import me.vinceh121.socialbladeapi.youtube.YTStats;
 
 public class SocialBlade {
 	public final static String VERSION = "0.2.1";
+	private String userAgent = "vinceh121.socialblade-api (" + VERSION + ")";
 
 	private String token, email;
 	private JSONObject userJson;
@@ -81,7 +82,7 @@ public class SocialBlade {
 
 		con.setRequestMethod("GET");
 
-		con.setRequestProperty("User-Agent", "vinceh121.socialblade-api (" + VERSION + ")");
+		con.setRequestProperty("User-Agent", userAgent);
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
@@ -97,6 +98,14 @@ public class SocialBlade {
 
 	private JSONObject getJson(String url) throws JSONException, Exception {
 		return new JSONObject(getUrl(url));
+	}
+
+	public void setUserAgent(String ua) {
+		this.userAgent = ua;
+	}
+
+	public String getUserAgent() {
+		return this.userAgent;
 	}
 
 	public enum PLATFORM {
