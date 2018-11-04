@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.vinceh121</groupId>
 	<artifactId>socialblade-api</artifactId>
-	<version>0.1.0</version>
+	<version>0.2.1</version>
 	<name>SocialBlade API</name>
 	<description>Unofficial Social Blade API</description>
 	<packaging>jar</packaging>

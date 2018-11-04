@@ -21,7 +21,7 @@ And then add the dependency:
 <dependency>
     <groupId>com.github.vinceh121</groupId>
     <artifactId>socialblade-api</artifactId>
-    <version>0.2.0</version>
+    <version>0.2.1</version>
 </dependency>
 ```
 

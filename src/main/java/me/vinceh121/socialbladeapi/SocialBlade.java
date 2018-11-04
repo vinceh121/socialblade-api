@@ -15,18 +15,20 @@ import me.vinceh121.socialbladeapi.twitter.TWStats;
 import me.vinceh121.socialbladeapi.youtube.YTStats;
 
 public class SocialBlade {
+	public final static String VERSION = "0.2.1";
+
 	private String token, email;
 	private JSONObject userJson;
 
 	public SocialBlade() {
 
 	}
-	
+
 	public TWStats statsTwitter(String name) throws JSONException, ParseException, Exception {
 		return TWStats.fromJson(getJson("https://api.socialblade.com/v2/twitter/statistics?query=statistics&username="
 				+ name + "&email=" + email + "&token=" + token));
 	}
-	
+
 	public JSONObject getUserJson() {
 		return userJson;
 	}
@@ -79,8 +81,7 @@ public class SocialBlade {
 
 		con.setRequestMethod("GET");
 
-		con.setRequestProperty("User-Agent",
-				"User-Agent', 'Mozilla/5.0 (Windows NT 6.1; rv:25.0) Gecko/20100101 Firefox/25.0");
+		con.setRequestProperty("User-Agent", "vinceh121.socialblade-api (" + VERSION + ")");
 
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		String inputLine;
