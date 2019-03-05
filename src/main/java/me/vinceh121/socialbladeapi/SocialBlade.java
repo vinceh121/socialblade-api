@@ -6,13 +6,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import me.vinceh121.socialbladeapi.twitter.TWStats;
 import me.vinceh121.socialbladeapi.youtube.YTStats;
+import org.json.JSONObject;
 
 public class SocialBlade {
 	public final static String VERSION = "0.2.1";
@@ -25,7 +21,7 @@ public class SocialBlade {
 
 	}
 
-	public TWStats statsTwitter(String name) throws JSONException, ParseException, Exception {
+	public TWStats statsTwitter(String name) throws Exception {
 		return TWStats.fromJson(getJson("https://api.socialblade.com/v2/twitter/statistics?query=statistics&username="
 				+ name + "&email=" + email + "&token=" + token));
 	}
@@ -34,12 +30,12 @@ public class SocialBlade {
 		return userJson;
 	}
 
-	public YTStats statsYoutube(String name) throws JSONException, Exception {
+	public YTStats statsYoutube(String name) throws Exception {
 		return YTStats.fromJson(getJson("https://api.socialblade.com/v2/youtube/statistics?query=statistics&username="
 				+ name + "&email=" + email + "&token=" + token));
 	}
 
-	public void login(String email, String password) throws JSONException, Exception {
+	public void login(String email, String password) throws Exception {
 		JSONObject l = getJson(
 				"https://api.socialblade.com/v2/bridge?email=" + email + "&password=" + getMD5(password));
 
@@ -50,7 +46,7 @@ public class SocialBlade {
 		this.email = email;
 
 		JSONObject c = getJson("https://api.socialblade.com/v2/bridge?email=" + email + "&token=" + token); // Check
-																											// login
+		// login
 
 		if (c.getJSONObject("status").getInt("response") != 200)
 			throw new Exception("API returned HTTP code " + c.getJSONObject("status").getInt("response"));
@@ -96,16 +92,16 @@ public class SocialBlade {
 
 	}
 
-	private JSONObject getJson(String url) throws JSONException, Exception {
+	private JSONObject getJson(String url) throws Exception {
 		return new JSONObject(getUrl(url));
-	}
-
-	public void setUserAgent(String ua) {
-		this.userAgent = ua;
 	}
 
 	public String getUserAgent() {
 		return this.userAgent;
+	}
+
+	public void setUserAgent(String ua) {
+		this.userAgent = ua;
 	}
 
 	public enum PLATFORM {
@@ -114,7 +110,7 @@ public class SocialBlade {
 
 		private String endPoint;
 
-		private PLATFORM(String endPoint) {
+		PLATFORM(String endPoint) {
 			this.endPoint = endPoint;
 		}
 
