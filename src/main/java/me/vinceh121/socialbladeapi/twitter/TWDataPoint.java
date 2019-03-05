@@ -3,13 +3,13 @@ package me.vinceh121.socialbladeapi.twitter;
 import java.util.Date;
 
 public interface TWDataPoint {
-	public Date getDate();
+	Date getDate();
 
-	public long getFollowers();
+	long getFollowers();
 
-	public long getFollowing();
+	long getFollowing();
 
-	public long getTweets();
+	long getTweets();
 
-	public long getFavorites();
+	long getFavorites();
 }

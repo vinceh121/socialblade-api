@@ -5,23 +5,122 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class YTStats {
-	private String channelId, username, cusername, mod, countryCode, country, channelType, avatar, banner, partner,
+	private long views;
+	private String channelId, username, cusername, mod, countryCode, country, channelType, avatar, banner,
 			grade, networkName, networkDisplayName, googleplus, facebook, twitter, instagram;
-	long views;
 	private boolean isVerfied;
 	private int sbRank, rank, viewsRank, countryRank, channelTypeRank, subsGrowth, viewsGrowth, averageDailyViews,
-			averageDailySubs, uploads, subs;
+			averageDailySubs, uploads, subs, partner;
 
 	private HashMap<Integer, Long> subsChart, viewsChart;
 	private HashMap<Integer, YTDataPoint> dataDaily;
 
 	private Date createdAt;
+
+	public static YTStats fromJson(JSONObject o) throws JSONException, ParseException {
+		final DateFormat df = new SimpleDateFormat("y-M-d");
+
+		YTStats s = new YTStats();
+
+		JSONObject id = o.getJSONObject("id");
+		s.channelId = id.getString("channelid");
+		s.username = id.getString("username");
+		s.cusername = id.getString("cusername");
+		s.mod = id.getString("mod");
+
+		JSONObject data = o.getJSONObject("data");
+		s.createdAt = df.parse(data.getString("created_at"));
+		s.uploads = data.getInt("uploads");
+		s.subs = data.getInt("subs");
+		s.views = data.getLong("views");
+		s.countryCode = data.getString("country_code");
+		s.country = data.getString("country");
+		s.channelType = data.getString("channeltype");
+		s.avatar = data.getString("avatar");
+		s.banner = data.getString("banner");
+		s.averageDailySubs = data.getInt("avgdailysubs");
+		s.averageDailyViews = data.getInt("avgdailyviews");
+		s.partner = data.getInt("partner");
+		s.isVerfied = 1 == data.getInt("isVerified");
+
+		JSONObject rankRaw = o.getJSONObject("rank").getJSONObject("raw");
+		s.sbRank = rankRaw.getInt("sbrank");
+		s.rank = rankRaw.getInt("rank");
+		s.viewsRank = rankRaw.getInt("viewsrank");
+		s.countryRank = rankRaw.getInt("countryrank");
+		s.channelTypeRank = rankRaw.getInt("channeltyperank");
+
+		s.grade = o.getJSONObject("rank").getString("grade_raw");
+
+		JSONObject network = o.getJSONObject("network");
+		try {
+			s.networkName = network.getString("networkname"); // Sometimes networkname = null
+		} catch (JSONException e) {
+		}
+
+		try {
+			s.networkDisplayName = network.getString("networkname_display"); // Sometime networkname_display = null
+		} catch (JSONException e) {
+		}
+
+		JSONObject social = o.getJSONObject("social");
+		s.googleplus = social.getString("googleplus");
+		s.facebook = social.getString("facebook");
+		s.twitter = social.getString("twitter");
+		s.instagram = social.getString("instagram");
+
+		JSONObject chartsSubs = o.getJSONObject("charts").getJSONObject("subs");
+		s.subsChart = new HashMap<Integer, Long>();
+		int n;
+		for (String k : chartsSubs.keySet()) {
+			n = Integer.parseInt(k.replaceAll("subs", ""));
+
+			s.subsChart.put(n, chartsSubs.getLong(k));
+		}
+
+		JSONObject chartsViews = o.getJSONObject("charts").getJSONObject("views");
+		s.viewsChart = new HashMap<Integer, Long>();
+		for (String k : chartsViews.keySet()) {
+			n = Integer.parseInt(k.replaceAll("views", ""));
+
+			s.subsChart.put(n, chartsViews.getLong(k));
+		}
+
+		final JSONArray daily = o.getJSONArray("data_daily");
+		s.dataDaily = new HashMap<Integer, YTDataPoint>();
+		for (int i = 0; i < daily.length(); i++) {
+			final JSONObject tmp = daily.getJSONObject(i);
+			s.dataDaily.put(i, new YTDataPoint() {
+
+				public int getViews() {
+					return tmp.getInt("views");
+				}
+
+				public int getSubs() {
+					return tmp.getInt("subs");
+				}
+
+				public Date getDate() {
+					try {
+						return df.parse(tmp.getString("date"));
+					} catch (JSONException e) {
+						e.printStackTrace();
+						return null;
+					} catch (ParseException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+			});
+		}
+
+		return s;
+	}
 
 	/**
 	 * @return the channelId
@@ -124,7 +223,7 @@ public class YTStats {
 	/**
 	 * @return the partner
 	 */
-	public String getPartner() {
+	public int getPartner() {
 		return partner;
 	}
 
@@ -252,106 +351,6 @@ public class YTStats {
 	 */
 	public HashMap<Integer, YTDataPoint> getDataDaily() {
 		return dataDaily;
-	}
-
-	public static YTStats fromJson(JSONObject o) throws JSONException, ParseException {
-		final DateFormat df = new SimpleDateFormat("y-M-d");
-
-		YTStats s = new YTStats();
-
-		JSONObject id = o.getJSONObject("id");
-		s.channelId = id.getString("channelid");
-		s.username = id.getString("username");
-		s.cusername = id.getString("cusername");
-		s.mod = id.getString("mod");
-
-		JSONObject data = o.getJSONObject("data");
-		s.createdAt = df.parse(data.getString("created_at"));
-		s.uploads = data.getInt("uploads");
-		s.subs = data.getInt("subs");
-		s.views = data.getLong("views");
-		s.countryCode = data.getString("country_code");
-		s.country = data.getString("country");
-		s.channelType = data.getString("channeltype");
-		s.avatar = data.getString("avatar");
-		s.banner = data.getString("banner");
-		s.averageDailySubs = data.getInt("avgdailysubs");
-		s.averageDailyViews = data.getInt("avgdailyviews");
-		s.partner = data.getString("partner"); // Check value type
-		s.isVerfied = "1".equals(data.getString("isVerified"));
-
-		JSONObject rankRaw = o.getJSONObject("rank").getJSONObject("raw");
-		s.sbRank = rankRaw.getInt("sbrank");
-		s.rank = rankRaw.getInt("rank");
-		s.viewsRank = rankRaw.getInt("viewsrank");
-		s.countryRank = rankRaw.getInt("countryrank");
-		s.channelTypeRank = rankRaw.getInt("channeltyperank");
-
-		s.grade = o.getJSONObject("rank").getString("grade_raw");
-
-		JSONObject network = o.getJSONObject("network");
-		try {
-			s.networkName = network.getString("networkname"); // Sometimes networkname = null
-		} catch (JSONException e) {
-		}
-
-		try {
-			s.networkDisplayName = network.getString("networkname_display"); // Sometime networkname_display = null
-		} catch (JSONException e) {
-		}
-
-		JSONObject social = o.getJSONObject("social");
-		s.googleplus = social.getString("googleplus");
-		s.facebook = social.getString("facebook");
-		s.twitter = social.getString("twitter");
-		s.instagram = social.getString("instagram");
-
-		JSONObject chartsSubs = o.getJSONObject("charts").getJSONObject("subs");
-		s.subsChart = new HashMap<Integer, Long>();
-		int n;
-		for (String k : chartsSubs.keySet()) {
-			n = Integer.parseInt(k.replaceAll("subs", ""));
-
-			s.subsChart.put(n, chartsSubs.getLong(k));
-		}
-
-		JSONObject chartsViews = o.getJSONObject("charts").getJSONObject("views");
-		s.viewsChart = new HashMap<Integer, Long>();
-		for (String k : chartsViews.keySet()) {
-			n = Integer.parseInt(k.replaceAll("views", ""));
-
-			s.subsChart.put(n, chartsViews.getLong(k));
-		}
-
-		final JSONArray daily = o.getJSONArray("data_daily");
-		s.dataDaily = new HashMap<Integer, YTDataPoint>();
-		for (int i = 0; i < daily.length(); i++) {
-			final JSONObject tmp = daily.getJSONObject(i);
-			s.dataDaily.put(i, new YTDataPoint() {
-
-				public int getViews() {
-					return tmp.getInt("views");
-				}
-
-				public int getSubs() {
-					return tmp.getInt("subs");
-				}
-
-				public Date getDate() {
-					try {
-						return df.parse(tmp.getString("date"));
-					} catch (JSONException e) {
-						e.printStackTrace();
-						return null;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-			});
-		}
-
-		return s;
 	}
 
 	/**

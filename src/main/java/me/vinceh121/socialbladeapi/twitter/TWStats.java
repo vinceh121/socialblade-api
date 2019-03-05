@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +19,111 @@ public class TWStats {
 	private Color color;
 	private Date createdAt;
 	private ArrayList<TWDataPoint> statistics;
+
+	public static TWStats fromJson(JSONObject o) throws JSONException, ParseException {
+		DateFormat creationDf = new SimpleDateFormat("E M d H:m:s X y");
+		TWStats s = new TWStats();
+
+		JSONObject user = o.getJSONObject("user");
+		s.twitterId = user.getString("twitter_id");
+		s.fullName = user.getString("full_name");
+		s.username = user.getString("username");
+		try {
+			s.createdAt = creationDf.parse(user.getString("created_at"));
+		} catch (ParseException e) {
+			System.err.println("Failed to parse account creation date for @" + s.getUsername());
+		}
+		try {
+			s.website = user.getString("website"); // website could be null
+		} catch (JSONException e) {
+			System.err.println("JSONException: " + e.getLocalizedMessage());
+		}
+		s.followers = user.getLong("followers");
+		s.following = user.getLong("following");
+		s.tweets = user.getLong("tweets");
+		s.favorites = user.getLong("favorites");
+		s.isVerified = user.getBoolean("isVerified");
+		s.isStaff = user.getBoolean("isStaff");
+
+		JSONObject userDesign = user.getJSONObject("design");
+		s.picture = userDesign.getString("picture");
+		s.banner = userDesign.getString("banner");
+		s.color = new Color(Integer.parseInt(userDesign.getString("color").replaceAll("#", ""), 16));
+
+		try {
+			JSONObject userRecentTweet = user.getJSONObject("recent_tweet"); // recent_tweet could be null
+			s.recentTweetId = userRecentTweet.getString("id");
+			s.recentTweetUrl = userRecentTweet.getString("url");
+		} catch (JSONException e) {
+			System.err.println("JSONException: " + e.getLocalizedMessage());
+		}
+
+		JSONObject average = o.getJSONObject("average");
+		s.averageRetweets = average.getLong("retweets");
+		s.averageFavourites = average.getLong("favourites");
+
+		JSONObject averageDaily = average.getJSONObject("daily");
+		s.dailyFollowers = averageDaily.getLong("followers");
+		s.dailyFollowing = averageDaily.getLong("following");
+
+		JSONObject rankRaw = o.getJSONObject("rank").getJSONObject("raw");
+		s.grade = rankRaw.getString("grade");
+		s.sbRank = rankRaw.getLong("sbrank");
+		s.rank = rankRaw.getLong("rank");
+		try {
+			JSONObject chartsFollowers = o.getJSONObject("charts").getJSONObject("followers");
+			s.weekFollowers = chartsFollowers.getLong("week");
+			s.monthFollowers = chartsFollowers.getLong("month");
+			s.yearFollowers = chartsFollowers.getLong("year");
+
+			JSONObject chartsFollowing = o.getJSONObject("charts").getJSONObject("following");
+			s.weekFollowing = chartsFollowing.getLong("week");
+			s.monthFollowing = chartsFollowing.getLong("month");
+			s.yearFollowing = chartsFollowing.getLong("year");
+		} catch (JSONException e) {
+			System.err.println("JSONException: " + e.getLocalizedMessage()); // all of charts' childs could be all set
+			// to null
+		}
+		final DateFormat df = new SimpleDateFormat("y-M-d");
+
+		final JSONArray stats = o.getJSONArray("statistics");
+		s.statistics = new ArrayList<TWDataPoint>();
+		for (int i = 0; i < stats.length(); i++) {
+			final JSONObject e = stats.getJSONObject(i);
+			s.statistics.add(i, new TWDataPoint() {
+
+				public long getTweets() {
+					return e.getLong("tweets");
+				}
+
+				public long getFollowing() {
+					return e.getLong("following");
+				}
+
+				public long getFollowers() {
+					return e.getLong("followers");
+				}
+
+				public long getFavorites() {
+					return e.getLong("favorites");
+				}
+
+				public Date getDate() {
+					try {
+						return df.parse(e.getString("date"));
+					} catch (JSONException e) {
+						e.printStackTrace();
+						return null;
+					} catch (ParseException e) {
+						e.printStackTrace();
+						return null;
+					}
+				}
+			});
+		}
+
+		return s;
+	}
 
 	/**
 	 * @return the twitterId
@@ -222,111 +326,6 @@ public class TWStats {
 	 */
 	public Date getCreatedAt() {
 		return createdAt;
-	}
-
-	public static TWStats fromJson(JSONObject o) throws JSONException, ParseException {
-		DateFormat creationDf = new SimpleDateFormat("E M d H:m:s X y");
-		TWStats s = new TWStats();
-
-		JSONObject user = o.getJSONObject("user");
-		s.twitterId = user.getString("twitter_id");
-		s.fullName = user.getString("full_name");
-		s.username = user.getString("username");
-		try {
-			s.createdAt = creationDf.parse(user.getString("created_at"));
-		} catch (ParseException e) {
-			System.err.println("Failed to parse account creation date for @" + s.getUsername());
-		}
-		try {
-			s.website = user.getString("website"); // website could be null
-		} catch (JSONException e) {
-			System.err.println("JSONException: " + e.getLocalizedMessage());
-		}
-		s.followers = user.getLong("followers");
-		s.following = user.getLong("following");
-		s.tweets = user.getLong("tweets");
-		s.favorites = user.getLong("favorites");
-		s.isVerified = user.getBoolean("isVerified");
-		s.isStaff = user.getBoolean("isStaff");
-
-		JSONObject userDesign = user.getJSONObject("design");
-		s.picture = userDesign.getString("picture");
-		s.banner = userDesign.getString("banner");
-		s.color = new Color(Integer.parseInt(userDesign.getString("color").replaceAll("#", ""), 16));
-
-		try {
-			JSONObject userRecentTweet = user.getJSONObject("recent_tweet"); // recent_tweet could be null
-			s.recentTweetId = userRecentTweet.getString("id");
-			s.recentTweetUrl = userRecentTweet.getString("url");
-		} catch (JSONException e) {
-			System.err.println("JSONException: " + e.getLocalizedMessage());
-		}
-
-		JSONObject average = o.getJSONObject("average");
-		s.averageRetweets = average.getLong("retweets");
-		s.averageFavourites = average.getLong("favourites");
-
-		JSONObject averageDaily = average.getJSONObject("daily");
-		s.dailyFollowers = averageDaily.getLong("followers");
-		s.dailyFollowing = averageDaily.getLong("following");
-
-		JSONObject rankRaw = o.getJSONObject("rank").getJSONObject("raw");
-		s.grade = rankRaw.getString("grade");
-		s.sbRank = rankRaw.getLong("sbrank");
-		s.rank = rankRaw.getLong("rank");
-		try {
-			JSONObject chartsFollowers = o.getJSONObject("charts").getJSONObject("followers");
-			s.weekFollowers = chartsFollowers.getLong("week");
-			s.monthFollowers = chartsFollowers.getLong("month");
-			s.yearFollowers = chartsFollowers.getLong("year");
-
-			JSONObject chartsFollowing = o.getJSONObject("charts").getJSONObject("following");
-			s.weekFollowing = chartsFollowing.getLong("week");
-			s.monthFollowing = chartsFollowing.getLong("month");
-			s.yearFollowing = chartsFollowing.getLong("year");
-		} catch (JSONException e) {
-			System.err.println("JSONException: " + e.getLocalizedMessage()); // all of charts' childs could be all set
-																				// to null
-		}
-		final DateFormat df = new SimpleDateFormat("y-M-d");
-
-		final JSONArray stats = o.getJSONArray("statistics");
-		s.statistics = new ArrayList<TWDataPoint>();
-		for (int i = 0; i < stats.length(); i++) {
-			final JSONObject e = stats.getJSONObject(i);
-			s.statistics.add(i, new TWDataPoint() {
-
-				public long getTweets() {
-					return e.getLong("tweets");
-				}
-
-				public long getFollowing() {
-					return e.getLong("following");
-				}
-
-				public long getFollowers() {
-					return e.getLong("followers");
-				}
-
-				public long getFavorites() {
-					return e.getLong("favorites");
-				}
-
-				public Date getDate() {
-					try {
-						return df.parse(e.getString("date"));
-					} catch (JSONException e) {
-						e.printStackTrace();
-						return null;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-			});
-		}
-
-		return s;
 	}
 
 }
