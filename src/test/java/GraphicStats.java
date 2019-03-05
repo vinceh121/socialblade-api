@@ -24,13 +24,13 @@ public class GraphicStats {
 	@Test
 	public void YTStats() throws HeadlessException, JSONException, Exception {
 		YTStats s = sb.statsYoutube(JOptionPane.showInputDialog("Youtuber to lookup"));
-		System.out.println("@" + s.getUsername() + "'s current total number of views is " + s.getViews());
+		System.out.println(s.getUsername() + "'s current total number of views is " + s.getViews());
 	}
 
 	@Test
 	public void TWStats() throws HeadlessException, JSONException, ParseException, Exception {
 		TWStats s = sb.statsTwitter(JOptionPane.showInputDialog("Twitter username to lookup"));
-		System.out.println(s.getFullName() + " has " + s.getFollowers() + " followers.");
+		System.out.println("@" + s.getFullName() + " has " + s.getFollowers() + " followers.");
 	}
 
 }
