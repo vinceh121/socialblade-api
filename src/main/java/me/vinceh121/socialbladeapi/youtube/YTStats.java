@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 public class YTStats {
 	private long views;
-	private String channelId, username, cusername, mod, countryCode, country, channelType, avatar, banner,
-			grade, networkName, networkDisplayName, googleplus, facebook, twitter, instagram;
+	private String channelId, username, cusername, mod, countryCode, country, channelType, avatar, banner, grade,
+			networkName, networkDisplayName, googleplus, facebook, twitter, instagram;
 	private boolean isVerfied;
 	private int sbRank, rank, viewsRank, countryRank, channelTypeRank, subsGrowth, viewsGrowth, averageDailyViews,
 			averageDailySubs, uploads, subs, partner;
@@ -95,28 +95,8 @@ public class YTStats {
 		s.dataDaily = new HashMap<Integer, YTDataPoint>();
 		for (int i = 0; i < daily.length(); i++) {
 			final JSONObject tmp = daily.getJSONObject(i);
-			s.dataDaily.put(i, new YTDataPoint() {
-
-				public int getViews() {
-					return tmp.getInt("views");
-				}
-
-				public int getSubs() {
-					return tmp.getInt("subs");
-				}
-
-				public Date getDate() {
-					try {
-						return df.parse(tmp.getString("date"));
-					} catch (JSONException e) {
-						e.printStackTrace();
-						return null;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-			});
+			s.dataDaily.put(i,
+					new YTDataPoint(df.parse(tmp.getString("date")), tmp.getInt("subs"), tmp.getInt("views")));
 		}
 
 		return s;

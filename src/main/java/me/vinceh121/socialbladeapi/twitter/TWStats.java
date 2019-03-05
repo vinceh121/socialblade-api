@@ -90,36 +90,8 @@ public class TWStats {
 		s.statistics = new ArrayList<TWDataPoint>();
 		for (int i = 0; i < stats.length(); i++) {
 			final JSONObject e = stats.getJSONObject(i);
-			s.statistics.add(i, new TWDataPoint() {
-
-				public long getTweets() {
-					return e.getLong("tweets");
-				}
-
-				public long getFollowing() {
-					return e.getLong("following");
-				}
-
-				public long getFollowers() {
-					return e.getLong("followers");
-				}
-
-				public long getFavorites() {
-					return e.getLong("favorites");
-				}
-
-				public Date getDate() {
-					try {
-						return df.parse(e.getString("date"));
-					} catch (JSONException e) {
-						e.printStackTrace();
-						return null;
-					} catch (ParseException e) {
-						e.printStackTrace();
-						return null;
-					}
-				}
-			});
+			s.statistics.add(i, new TWDataPoint(df.parse(e.getString("date")), e.getLong("followers"),
+					e.getLong("following"), e.getLong("tweets"), e.getLong("favorites")));
 		}
 
 		return s;
