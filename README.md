@@ -4,7 +4,7 @@ Unofficial Java API to communicate to SocialBlade.
 For now, only Youtube and Twitter are implemented.
 
 ## How to use
-The library can be used like any other Maven artefact, just add the Jitpack.io repository:
+The library can be used like any other Maven artifact, just add the Jitpack.io repository:
 
 ```xml
 <repositories>
