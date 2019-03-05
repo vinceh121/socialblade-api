@@ -33,7 +33,7 @@ The following example prints out the number of subscribers of pewdiepie's Youtub
 SocialBlade sb = new SocialBlade();
 sb.login("Your SocialBlade username", "Your SocialBlade password");
 
-YTStats stats = sb.statsYoutube(JOptionPane.showInputDialog("Youtuber to lookup"));
+YTStats stats = sb.statsYoutube("pewdiepie");
 System.out.println(stats.getSubs());
 ```
 
