@@ -11,11 +11,12 @@ import me.vinceh121.socialbladeapi.youtube.YTStats;
 import org.json.JSONObject;
 
 public class SocialBlade {
-	public final static String VERSION = "0.2.1";
+	public final static String VERSION = "0.2.2";
 	private String userAgent = "vinceh121.socialblade-api (" + VERSION + ")";
 
 	private String token, email;
 	private JSONObject userJson;
+	private boolean ignoreLoginCheck;
 
 	public SocialBlade() {
 
@@ -45,13 +46,28 @@ public class SocialBlade {
 		token = l.getJSONObject("id").getString("token");
 		this.email = email;
 
-		JSONObject c = getJson("https://api.socialblade.com/v2/bridge?email=" + email + "&token=" + token); // Check
-		// login
-
-		if (c.getJSONObject("status").getInt("response") != 200)
-			throw new Exception("API returned HTTP code " + c.getJSONObject("status").getInt("response"));
-
+		
+		//userJson = c; // Moved in checkLogin()
+	}
+	
+	public void loginToken(String email, String token) throws Exception {
+		this.token = token;
+		this.email = email;
+		if (!checkLogin())
+			throw new Exception("Failed to check token validity");
+	}
+	
+	/**
+	 * Checks if our token is still up to date
+	 * @return {@code true} if check succeeded, {@code false} otherwise
+	 * @throws Exception
+	 */
+	public boolean checkLogin() throws Exception {
+		if (ignoreLoginCheck)
+			return true;
+		JSONObject c = getJson("https://api.socialblade.com/v2/bridge?email=" + email + "&token=" + token);
 		userJson = c;
+		return c.getJSONObject("status").getInt("response") == 200;
 	}
 
 	private String getMD5(String s) {
@@ -102,6 +118,14 @@ public class SocialBlade {
 
 	public void setUserAgent(String ua) {
 		this.userAgent = ua;
+	}
+
+	public boolean isIgnoreLoginCheck() {
+		return ignoreLoginCheck;
+	}
+
+	public void setIgnoreLoginCheck(boolean ignoreLoginCheck) {
+		this.ignoreLoginCheck = ignoreLoginCheck;
 	}
 
 	public enum PLATFORM {

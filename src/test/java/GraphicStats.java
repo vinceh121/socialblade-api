@@ -18,7 +18,8 @@ public class GraphicStats {
 		if (sb != null)
 			return;
 		sb = new SocialBlade();
-		sb.login(JOptionPane.showInputDialog("SB Email"), JOptionPane.showInputDialog("SB Password (visisble)"));
+		sb.setUserAgent("Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0");
+		sb.loginToken(JOptionPane.showInputDialog("SB Email"), JOptionPane.showInputDialog("SB Token (visisble)"));
 	}
 
 	@Test
