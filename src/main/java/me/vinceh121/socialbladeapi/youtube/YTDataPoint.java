@@ -2,7 +2,9 @@ package me.vinceh121.socialbladeapi.youtube;
 
 import java.util.Date;
 
-public class YTDataPoint {
+import me.vinceh121.socialbladeapi.DataPoint;
+
+public class YTDataPoint implements DataPoint {
 	private Date date;
 	private int subs, views;
 

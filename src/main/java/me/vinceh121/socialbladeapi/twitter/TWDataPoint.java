@@ -2,7 +2,9 @@ package me.vinceh121.socialbladeapi.twitter;
 
 import java.util.Date;
 
-public class TWDataPoint {
+import me.vinceh121.socialbladeapi.DataPoint;
+
+public class TWDataPoint implements DataPoint {
 	private Date date;
 	private long followers, following, tweets, favorites;
 
